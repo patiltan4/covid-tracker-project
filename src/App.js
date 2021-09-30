@@ -1,4 +1,10 @@
-import { FormControl, Select, MenuItem, Card, CardContent } from "@mui/material";
+import {
+    FormControl,
+    Select,
+    MenuItem,
+    Card,
+    CardContent,
+} from "@mui/material";
 import React, { useState, useEffect } from "react";
 import InfoBox from "./InfoBox";
 import Map from "./Map";
@@ -9,11 +15,20 @@ import "./App.css";
 function App() {
     //countries for dropdown option
     //country for selected option from dropdown menu
+    //countryInfo for data related to after selecting option
     const [countries, setCountries] = useState([]);
     const [country, setCountry] = useState("Worldwide");
+    const [countryInfo, setCountryInfo] = useState({});
 
     useEffect(() => {
-        
+      fetch("https://disease.sh/v3/covid-19/all")
+      .then(response => response.json())
+      .then(data => {
+        setCountryInfo(data);
+      });
+    }, []);
+
+    useEffect(() => {
         //async
         const getCountriesData = async () => {
             await fetch("https://disease.sh/v3/covid-19/countries")
@@ -27,64 +42,83 @@ function App() {
                 });
         };
         getCountriesData();
-    }, [countries]);
+    }, []);
 
     //for selected option to listen
-    const onCountryChange = (event) => {
-      const countryCode = event.target.value;
-      console.log(countryCode);
-      setCountry(countryCode);
-    }
+    const onCountryChange = async (event) => {
+        const countryCode = event.target.value;
+        console.log(countryCode);
+
+        //https://disease.sh/v3/covid-19/all
+        //https://disease.sh/v3/covid-19/countries/[COUNTRY_CODE]
+
+        const url =
+            countryCode === "Worldwide"
+                ? "https://disease.sh/v3/covid-19/all"
+                : `https://disease.sh/v3/covid-19/countries/${countryCode}`;
+
+        await fetch(url)
+            .then((response) => response.json())
+            .then((data) => {
+                setCountry(countryCode);
+
+                //All of the data from country response
+                setCountryInfo(data);
+            });
+    };
+    console.log("country data", countryInfo);
+    
 
     return (
         <div className="app">
-          <div className="app__left">
-            <div className="app__header">
-                  <h1>COVID 19 TRACKER</h1>
-                  <FormControl className="app__dropdown">
-                      <Select variant="outlined" onChange={onCountryChange} value={country}>
-                          {/* Loop through */}
-                          <MenuItem value="Worldwide">Worldwide</MenuItem>
+            <div className="app__left">
+                <div className="app__header">
+                    <h1>COVID 19 TRACKER</h1>
+                    <FormControl className="app__dropdown">
+                        <Select
+                            variant="outlined"
+                            onChange={onCountryChange}
+                            value={country}
+                        >
+                            {/* Loop through */}
+                            <MenuItem value="Worldwide">Worldwide</MenuItem>
 
-                          {countries.map((country) => (
-                              <MenuItem value={country.value}>
-                                  {country.name}
-                              </MenuItem>
-                          ))}
-                      </Select>
-                  </FormControl>
-              </div>
+                            {countries.map((country) => (
+                                <MenuItem value={country.value}>
+                                    {country.name}
+                                </MenuItem>
+                            ))}
+                        </Select>
+                    </FormControl>
+                </div>
 
-              {/* Header */}
-              {/* Title and select */}
+                {/* Header */}
+                {/* Title and select */}
 
+                <div className="app__stats">
+                    <InfoBox title="Covid Cases" cases={countryInfo.todayCases} total={countryInfo.cases} />
 
-              <div className="app__stats">
-                    <InfoBox title="Covid Cases" cases={12487} total ={2000} />
+                    <InfoBox title="Recovered" cases={countryInfo.todayRecovered} total={countryInfo.recovered} />
 
-                    <InfoBox title="Recovered" cases={1245} total ={2000}/>
+                    <InfoBox title="Deaths" cases={countryInfo.todayDeaths} total={countryInfo.deaths} />
+                </div>
 
-                    <InfoBox title="Deaths" cases={12499} total ={2000}/>
-              </div>
+                {/* info  */}
+                {/* info */}
+                {/* info  */}
 
-              {/* info  */}
-              {/* info */}
-              {/* info  */}
+                {/* Map */}
+                <Map />
+            </div>
+            <Card className="app__right">
+                <CardContent>
+                    <h3>Live Cases by Country</h3>
+                    {/* Table */}
 
-              
-
-              {/* Map */}
-              <Map />
-          </div>
-          <Card className="app__right">
-            <CardContent>
-              <h3>Live Cases by Country</h3>
-                {/* Table */}
-
-              <h3>Worldwide new cases</h3>
-                {/* Graph */}
-            </CardContent>
-          </Card> 
+                    <h3>Worldwide new cases</h3>
+                    {/* Graph */}
+                </CardContent>
+            </Card>
         </div>
     );
 }

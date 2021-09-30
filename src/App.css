@@ -11,6 +11,10 @@ body {
     padding: 20px;
 }
 
+.app__left {
+    flex: 0.9;
+}
+
 .app__header {
     display: flex;
     align-items: center;
@@ -23,8 +27,8 @@ body {
     justify-content: space-between;
 }
 
-@media(max-width: 990px){
-  .app{
-    flex-direction:column;
-  }
+@media (max-width: 990px) {
+    .app {
+        flex-direction: column;
+    }
 }
