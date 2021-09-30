@@ -1,14 +1,18 @@
 import { FormControl, Select, MenuItem } from "@mui/material";
 import React, { useState, useEffect } from "react";
+import InfoBox from "./InfoBox";
 import "./App.css";
 
 //https://disease.sh/v3/covid-19/countries
 
 function App() {
-    const [countries, setCountries] = useState(["UK", "USA", "INDIA"]);
+    //countries for dropdown option
+    //country for selected option from dropdown menu
+    const [countries, setCountries] = useState([]);
+    const [country, setCountry] = useState("Worldwide");
 
     useEffect(() => {
-        console.log("effect");
+        
         //async
         const getCountriesData = async () => {
             await fetch("https://disease.sh/v3/covid-19/countries")
@@ -24,13 +28,21 @@ function App() {
         getCountriesData();
     }, [countries]);
 
+    //for selected option to listen
+    const onCountryChange = (event) => {
+      const countryCode = event.target.value;
+      console.log(countryCode);
+      setCountry(countryCode);
+    }
+
     return (
         <div className="app">
             <div className="app__header">
                 <h1>COVID 19 TRACKER</h1>
                 <FormControl className="app__dropdown">
-                    <Select variant="outlined" value="abc">
+                    <Select variant="outlined" onChange={onCountryChange} value={country}>
                         {/* Loop through */}
+                        <MenuItem value="Worldwide">Worldwide</MenuItem>
 
                         {countries.map((country) => (
                             <MenuItem value={country.value}>
@@ -43,6 +55,15 @@ function App() {
 
             {/* Header */}
             {/* Title and select */}
+
+
+            <div className="app__stats">
+                  <InfoBox title="Covid Cases" cases={12487} total ={2000} />
+
+                  <InfoBox title="Recovered" cases={1245} total ={2000}/>
+
+                  <InfoBox title="Deaths" cases={12499} total ={2000}/>
+            </div>
 
             {/* info  */}
             {/* info */}
