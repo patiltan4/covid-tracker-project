@@ -11,6 +11,7 @@ import Map from "./Map";
 import Table from "./Table";
 import "./App.css";
 import { sortData } from "./util";
+import LineGraph from "./LineGraph";
 
 //https://disease.sh/v3/covid-19/countries
 
@@ -135,6 +136,7 @@ function App() {
                     <Table countries={tableData} />
 
                     <h3>Worldwide new cases</h3>
+                    <LineGraph />
                     {/* Graph */}
                 </CardContent>
             </Card>
