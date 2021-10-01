@@ -93,9 +93,9 @@ const LineGraph = ({ casesType = "cases" }) => {
                             {
                                 backgroundColor: "rgba(204, 16, 52, 0.4)",
                                 borderColor: "#CC1034",
-                                data: data,
-                            },
-                        ],
+                                data: data
+                            }
+                        ]
                     }}
                     options={options}
                 />
