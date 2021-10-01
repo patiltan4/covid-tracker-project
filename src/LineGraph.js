@@ -3,12 +3,11 @@ import { Line } from "react-chartjs-2";
 import numeral from "numeral";
 
 const options = {
-   plugins:{
-      legend: {
-        display: false
-      }
-   }
-    ,
+    plugins: {
+        legend: {
+            display: false,
+        },
+    },
     elements: {
         point: {
             radius: 0,
@@ -50,34 +49,34 @@ const options = {
     },
 };
 
-const LineGraph = ({ casesType = "cases" }) => {
+const buildChartData = (data, casesType) => {
+    const chartData = [];
+    let lastDataPoint;
+
+    for (let date in data.cases) {
+        if (lastDataPoint) {
+            const newDataPoint = {
+                x: date,
+                y: data[casesType][date] - lastDataPoint,
+            };
+            chartData.push(newDataPoint);
+        }
+        lastDataPoint = data[casesType][date];
+    }
+    return chartData;
+};
+
+const LineGraph = ({ casesType }) => {
     const [data, setData] = useState({});
 
     //https://disease.sh/v3/covid-19/historical/all?lastdays=120
-
-    const buildChartData = (data, casesType = "cases") => {
-        const chartData = [];
-        let lastDataPoint;
-
-        for (let date in data.cases) {
-            if (lastDataPoint) {
-                const newDataPoint = {
-                    x: date,
-                    y: data[casesType][date] - lastDataPoint,
-                };
-                chartData.push(newDataPoint);
-            }
-            lastDataPoint = data[casesType][date];
-        }
-        return chartData;
-    };
 
     useEffect(() => {
         const fetchData = async () => {
             fetch("https://disease.sh/v3/covid-19/historical/all?lastdays=120")
                 .then((response) => response.json())
                 .then((data) => {
-                    let chartData = buildChartData(data, "cases");
+                    let chartData = buildChartData(data, casesType);
                     setData(chartData);
                 });
         };
@@ -93,9 +92,9 @@ const LineGraph = ({ casesType = "cases" }) => {
                             {
                                 backgroundColor: "rgba(204, 16, 52, 0.4)",
                                 borderColor: "#CC1034",
-                                data: data
-                            }
-                        ]
+                                data: data,
+                            },
+                        ],
                     }}
                     options={options}
                 />
