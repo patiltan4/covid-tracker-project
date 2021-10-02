@@ -66,7 +66,7 @@ const buildChartData = (data, casesType) => {
     return chartData;
 };
 
-const LineGraph = ({ casesType }) => {
+const LineGraph = ({ casesType, ...props }) => {
     const [data, setData] = useState({});
 
     //https://disease.sh/v3/covid-19/historical/all?lastdays=120
@@ -84,7 +84,7 @@ const LineGraph = ({ casesType }) => {
     }, [casesType]);
 
     return (
-        <div>
+        <div className={props.className}>
             {data?.length > 0 && (
                 <Line
                     data={{
